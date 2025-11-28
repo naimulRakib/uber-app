@@ -17,7 +17,7 @@ import {
 
 const CartoonFeatures = () => {
   return (
-    <div className="min-h-screen bg-transparent p-4 sm:p-8 font-sans selection:bg-black selection:text-yellow-400">
+    <div className="min-h-screen bg-transparent p-4 sm:p-8 font-sans selection:bg-black selection:text-yellow-400 rounded-3xl">
       
       {/* Custom Styles for Floating Animation */}
       <style>{`

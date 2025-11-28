@@ -3,7 +3,7 @@ import { EyeOff, MapPin, Bot, MessageCircle, Ghost, AlertOctagon, Ban, Laugh } f
 
 const CartoonSpyMode = () => {
   return (
-    <div className="min-h-screen bg-blue-100 p-6 flex items-center justify-center font-comic selection:bg-yellow-300 selection:text-purple-900" style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>
+    <div className="min-h-screen bg-blue-100 p-6 flex items-center justify-center font-comic selection:bg-yellow-300 selection:text-purple-900 rounded-3xl" style={{ fontFamily: '"Comic Sans MS", "Comic Sans", cursive' }}>
       
       {/* Background Pattern */}
       <div className="fixed inset-0 pointer-events-none opacity-20" style={{

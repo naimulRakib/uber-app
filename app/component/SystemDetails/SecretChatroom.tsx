@@ -3,7 +3,7 @@ import { Scan, Lock, ShieldCheck, AlertTriangle, Terminal } from 'lucide-react';
 
 const SecurityExplainer = () => {
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 font-sans text-slate-200 selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 font-sans text-slate-200 selection:bg-emerald-500/30 rounded-3xl">
       
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none">
@@ -98,7 +98,7 @@ const SecurityExplainer = () => {
         {/* CTA Section */}
         <div className="mt-16 text-center">
           
-          <p className="mt-4 text-xs text-slate-500">Encryption v2.4.0</p>
+          <p className="mt-4 text-xs text-slate-500">Encryption twistedapp</p>
         </div>
 
       </div>

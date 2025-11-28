@@ -155,7 +155,7 @@ export default function HomeUI() {
             </div>
         </div>
       </div>
-
+ <CartoonFeatures/>
       {/* --- FEATURE STRIP --- */}
       <div className="w-full border-y border-white/5 bg-black/50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-center md:justify-between gap-8 md:gap-0 text-center md:text-left">
@@ -183,7 +183,7 @@ export default function HomeUI() {
         </div>
       </div>
 
-    <CartoonFeatures/>
+   
 
     </div>
   );
