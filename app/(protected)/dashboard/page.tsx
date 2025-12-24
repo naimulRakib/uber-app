@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation'; 
 import dynamic from 'next/dynamic';
-// 👇 NEW: Use our custom client utility instead of the old auth-helpers
 import { createClient } from '@/app/utils/supabase/client';
 import { 
   FileText, 
@@ -15,7 +14,8 @@ import {
   ShieldAlert,
   CheckCircle,
   GraduationCap,
-  BellRing 
+  BellRing,
+  X 
 } from 'lucide-react'; 
 
 // --- COMPONENTS ---
@@ -27,12 +27,13 @@ import ChatWindow from '@/app/component/ChatWindow';
 import RecommendationList from '@/app/component/RecommendationList';
 import AiChatWindow from '@/app/component/AiChatWindow';
 import VarsityVerification from '@/app/component/VarsityVerification'; 
+import UserCard from '@/app/component/map/UserCard';
 
 // --- NEW COMPONENTS (Contact System) ---
 import ContactModal from '@/app/component/ContactModel'; 
 import ProposalList from '@/app/component/dashboard/ProposalList'; 
 
-// Dynamic Map
+// Dynamic Map with Custom Loading
 const MapDisplay = dynamic(() => import('@/app/component/MapDisplay'), { 
   ssr: false,
   loading: () => (
@@ -43,8 +44,14 @@ const MapDisplay = dynamic(() => import('@/app/component/MapDisplay'), {
   )
 });
 
+// Helper to safely parse JSON strings from DB
+const safeParse = (data: any) => {
+  if (!data) return {};
+  if (typeof data === 'object') return data;
+  try { return JSON.parse(data); } catch (e) { return {}; }
+};
+
 export default function DashboardPage() {
-  // 👇 UPDATED: Initialize Supabase properly for Next.js 15
   const supabase = createClient();
   const router = useRouter();
   
@@ -61,6 +68,9 @@ export default function DashboardPage() {
   // NEW: Proposal System States
   const [showProposals, setShowProposals] = useState(false); 
   const [contactTarget, setContactTarget] = useState<any | null>(null); 
+  
+  // NEW: Detailed Profile Viewer State
+  const [viewingProfile, setViewingProfile] = useState<any | null>(null);
 
   // --- DATA INTERACTION ---
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
@@ -140,6 +150,35 @@ export default function DashboardPage() {
     router.replace('/login');
   };
 
+  // NEW: Handle Viewing Full Profile from List or Map
+  const handleViewProfile = async (userId: string) => {
+    setViewingProfile({ loading: true });
+    
+    // Fetch full details based on opposing role
+    // If I am student, I view 'tutors'. If I am tutor, I view 'students' (future proofing)
+    const tableName = profile?.role === 'student' ? 'tutors' : 'students';
+    
+    // NOTE: If table is 'students', ensure fields exist or adjust select query
+    const { data } = await supabase
+      .from('tutors') // Defaulting to tutors for now as per your flow
+      .select('*, profiles(username)')
+      .eq('id', userId)
+      .single();
+
+    if (data) {
+      setViewingProfile({
+        ...data,
+        basic_info: safeParse(data.basic_info),
+        teaching_details: safeParse(data.teaching_details),
+        varsity_infos: safeParse(data.varsity_infos),
+        name: data.basic_info?.full_name || data.profiles?.username || "User",
+        loading: false
+      });
+    } else {
+      setViewingProfile(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-emerald-500 font-mono space-y-4">
@@ -216,6 +255,33 @@ export default function DashboardPage() {
                    setShowProposals(false);     
                 }}
               />
+           </div>
+        </div>
+      )}
+
+      {/* 6. FULL PROFILE VIEWER (From Map or List) */}
+      {viewingProfile && (
+        <div className="absolute inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in zoom-in-95">
+           <div className="bg-white w-full max-w-md rounded-2xl relative overflow-hidden shadow-2xl border border-gray-200">
+              <button onClick={() => setViewingProfile(null)} className="absolute top-3 right-3 p-1.5 bg-gray-100 hover:bg-gray-200 rounded-full z-10 text-black transition-colors">
+                <X size={20}/>
+              </button>
+              
+              {viewingProfile.loading ? (
+                 <div className="h-64 flex flex-col items-center justify-center gap-2 text-gray-500">
+                    <RefreshCw className="animate-spin" size={24}/>
+                    <span className="text-xs uppercase tracking-widest">Loading Profile...</span>
+                 </div>
+              ) : (
+                 <UserCard 
+                    user={viewingProfile}
+                    myRole={profile.role}
+                    onContact={() => {
+                       setContactTarget({ id: viewingProfile.id, name: viewingProfile.name });
+                       setViewingProfile(null);
+                    }}
+                 />
+              )}
            </div>
         </div>
       )}
@@ -310,6 +376,8 @@ export default function DashboardPage() {
             results={aiResults} 
             onClose={() => setAiResults(null)}
             onContact={(user) => setContactTarget(user)}
+            // 👇 VIEW PROFILE CONNECTION
+            onViewProfile={(userId) => handleViewProfile(userId)}
           />
         )}
 
@@ -345,6 +413,7 @@ export default function DashboardPage() {
             myRole={profile?.role} 
             highlightedUsers={aiResults}
             onLocationFound={(loc) => setUserLocation(loc)}
+            // 👇 Handle Map Marker Click (Contact)
             onContactUser={(targetUser) => {
               const id = targetUser.tutor_id || targetUser.student_id || targetUser.id;
               const name = targetUser.tutor_name || targetUser.student_name || targetUser.username || targetUser.name || "User";

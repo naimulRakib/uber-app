@@ -12,6 +12,7 @@ interface RecommendationListProps {
   results: any[];
   onClose: () => void;
   onContact: (user: any) => void;
+  onViewProfile: (userId: string) => void;
 }
 
 // Helper to safely parse JSON strings from DB
