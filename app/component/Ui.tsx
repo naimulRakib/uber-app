@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 
-import CartoonFeatures from './SystemDetails/CartoonFeautures';
+
 export default function HomeUI() {
   return (
     <div className="min-h-screen bg-[#030303] text-white font-sans selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
@@ -155,7 +155,7 @@ export default function HomeUI() {
             </div>
         </div>
       </div>
- <CartoonFeatures/>
+
       {/* --- FEATURE STRIP --- */}
       <div className="w-full border-y border-white/5 bg-black/50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-center md:justify-between gap-8 md:gap-0 text-center md:text-left">

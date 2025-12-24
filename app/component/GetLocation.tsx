@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useMap } from 'react-leaflet';
-
-import { supabase } from '@/lib/supabaseClient'; 
+import { Navigation, Loader2, AlertCircle } from 'lucide-react';
 
 interface Location {
   lat: number;
@@ -9,116 +8,104 @@ interface Location {
 }
 
 interface GetLocationProps {
-  onLocationFound: (pos: Location) => void;
-  
-  onInsertSuccess?: () => void; 
+  onLocationFound?: (pos: Location) => void;
 }
 
-const GetLocation: React.FC<GetLocationProps> = ({ onLocationFound, onInsertSuccess }) => {
+const GetLocation: React.FC<GetLocationProps> = ({ onLocationFound }) => {
   const map = useMap();
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasFoundLocation, setHasFoundLocation] = useState(false);
-
-  const insertLocationIntoSupabase = async (location: Location) => {
-    
-    
-    const { data, error } = await supabase
-      .from('messages')
-      .insert([
-        { 
-          lat: location.lat, 
-          lng: location.lng,
-      
-        }
-      ])
-      .select();
-
-    if (error) {
-      console.error("Supabase Insert Error:", error);
-      alert("Failed to save location to database: " + error.message);
-      return false;
-    }
-    
-    console.log("Location successfully inserted into Supabase:", data);
-    onInsertSuccess?.();
-    return true;
-  };
-
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleGetLocation = () => {
+    setStatus('loading');
+    setErrorMessage('');
+
     if (!('geolocation' in navigator)) {
-      alert("Geolocation is not supported");
+      setStatus('error');
+      setErrorMessage("Geolocation is not supported");
       return;
     }
 
-    setIsLoading(true);
-
     navigator.geolocation.getCurrentPosition(
-      async (position) => { 
+      (position) => {
         const newLocation: Location = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
 
-       
-        const insertSuccessful = await insertLocationIntoSupabase(newLocation);
-        
-       
-        if (insertSuccessful) {
-          
-            onLocationFound(newLocation);
-            setHasFoundLocation(true);
-
-            
-            map.flyTo([newLocation.lat, newLocation.lng], 16, { duration: 1.5 });
+        // 1. Pass location to parent if callback exists (for marker drawing)
+        if (onLocationFound) {
+          onLocationFound(newLocation);
         }
-       
-      
-        setIsLoading(false);
+
+        // 2. Fly to the location (Targeting)
+        map.flyTo([newLocation.lat, newLocation.lng], 16, { 
+          duration: 1.5,
+          easeLinearity: 0.25
+        });
+
+        setStatus('idle');
       },
       (error) => {
         console.error("Geolocation Error:", error);
-        alert("Could not get location. Ensure GPS is enabled.");
-        
-        
-        setIsLoading(false);
+        setStatus('error');
+        // User-friendly error mapping
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            setErrorMessage("Permission denied. Please enable GPS.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setErrorMessage("Location unavailable.");
+            break;
+          case error.TIMEOUT:
+            setErrorMessage("Request timed out.");
+            break;
+          default:
+            setErrorMessage("Unknown error.");
+        }
       },
-
       {
         enableHighAccuracy: true,
-        timeout: 10000, 
+        timeout: 10000,
         maximumAge: 0
       }
     );
   };
 
   return (
-    <div style={{
-      position: 'absolute',
-      top: 10,
-      right: 10,
-      zIndex: 1000
-    }}>
-      <button 
+    <div className="absolute top-4 right-4 z-[1000] flex flex-col items-end gap-2">
+      {/* Error Toast */}
+      {status === 'error' && (
+        <div className="bg-white text-red-600 px-3 py-2 rounded-lg shadow-md border-l-4 border-red-500 text-xs font-medium flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+          <AlertCircle size={14} />
+          <span>{errorMessage}</span>
+          <button onClick={() => setStatus('idle')} className="ml-1 hover:bg-gray-100 rounded-full p-0.5">×</button>
+        </div>
+      )}
+
+      {/* Main Button */}
+      <button
         onClick={handleGetLocation}
-        disabled={isLoading}
-        style={{
-          backgroundColor: isLoading ? '#ccc' : 'white',
-          color: 'black',
-          border: '2px solid #ccc',
-          padding: '10px 15px',
-          borderRadius: '4px',
-          cursor: isLoading ? 'wait' : 'pointer',
-          fontWeight: 'bold',
-          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-          transition: 'background-color 0.3s'
-        }}
+        disabled={status === 'loading'}
+        className={`
+          flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm shadow-md transition-all duration-200
+          ${status === 'loading' 
+            ? 'bg-gray-100 text-gray-400 cursor-wait' 
+            : 'bg-white text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:ring-2 ring-blue-100 active:scale-95'
+          }
+        `}
       >
-        {isLoading 
-          ? "Locating and Saving..." 
-          : hasFoundLocation 
-            ? "🎯 Recenter & Update" 
-            : "📍 Find & Save Location"}
+        {status === 'loading' ? (
+          <>
+            <Loader2 size={16} className="animate-spin" />
+            <span>Locating...</span>
+          </>
+        ) : (
+          <>
+            <Navigation size={16} className={status === 'idle' ? "fill-current" : ""} />
+            <span>Find My Location</span>
+          </>
+        )}
       </button>
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/client';
 
 export default function UpgradeIdentity() {
   const [email, setEmail] = useState("");
@@ -9,7 +9,7 @@ export default function UpgradeIdentity() {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'input' | 'success'>('input');
   
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const handleUpgrade = async (e: React.FormEvent) => {
     e.preventDefault();
