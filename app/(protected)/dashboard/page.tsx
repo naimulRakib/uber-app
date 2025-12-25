@@ -1,8 +1,11 @@
+// 👇 This line fixes the "Prerender Error" during build
+// export const dynamic = 'force-dynamic';
+
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation'; 
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic'; // Renamed to avoid name conflict
 import { createClient } from '@/app/utils/supabase/client';
 import { 
   FileText, 
@@ -15,7 +18,8 @@ import {
   CheckCircle,
   GraduationCap,
   BellRing,
-  X 
+  X,
+  CalendarClock // 👇 Added Icon
 } from 'lucide-react'; 
 
 // --- COMPONENTS ---
@@ -29,12 +33,14 @@ import AiChatWindow from '@/app/component/AiChatWindow';
 import VarsityVerification from '@/app/component/VarsityVerification'; 
 import UserCard from '@/app/component/map/UserCard';
 
-// --- NEW COMPONENTS (Contact System) ---
+// --- NEW COMPONENTS ---
 import ContactModal from '@/app/component/ContactModel'; 
 import ProposalList from '@/app/component/dashboard/ProposalList'; 
+// 👇 NEW: Import the Schedule Manager
+import UpcomingAppointments from '@/app/component/dashboard/UpcomingAppointments';
 
-// Dynamic Map with Custom Loading
-const MapDisplay = dynamic(() => import('@/app/component/MapDisplay'), { 
+// Dynamic Map
+const MapDisplay = dynamicImport(() => import('@/app/component/MapDisplay'), { 
   ssr: false,
   loading: () => (
     <div className="h-full w-full bg-[#050505] flex flex-col items-center justify-center text-emerald-500 font-mono">
@@ -44,7 +50,7 @@ const MapDisplay = dynamic(() => import('@/app/component/MapDisplay'), {
   )
 });
 
-// Helper to safely parse JSON strings from DB
+// Helper
 const safeParse = (data: any) => {
   if (!data) return {};
   if (typeof data === 'object') return data;
@@ -65,11 +71,10 @@ export default function DashboardPage() {
   const [showInbox, setShowInbox] = useState(false);
   const [showVarsityVerify, setShowVarsityVerify] = useState(false);
   
-  // NEW: Proposal System States
+  // --- NEW FEATURE STATES ---
   const [showProposals, setShowProposals] = useState(false); 
+  const [showSchedule, setShowSchedule] = useState(false); // 👇 NEW: Schedule State
   const [contactTarget, setContactTarget] = useState<any | null>(null); 
-  
-  // NEW: Detailed Profile Viewer State
   const [viewingProfile, setViewingProfile] = useState<any | null>(null);
 
   // --- DATA INTERACTION ---
@@ -150,17 +155,13 @@ export default function DashboardPage() {
     router.replace('/login');
   };
 
-  // NEW: Handle Viewing Full Profile from List or Map
+  // NEW: Handle Viewing Full Profile
   const handleViewProfile = async (userId: string) => {
     setViewingProfile({ loading: true });
     
-    // Fetch full details based on opposing role
-    // If I am student, I view 'tutors'. If I am tutor, I view 'students' (future proofing)
     const tableName = profile?.role === 'student' ? 'tutors' : 'students';
-    
-    // NOTE: If table is 'students', ensure fields exist or adjust select query
     const { data } = await supabase
-      .from('tutors') // Defaulting to tutors for now as per your flow
+      .from(tableName)
       .select('*, profiles(username)')
       .eq('id', userId)
       .single();
@@ -259,7 +260,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* 6. FULL PROFILE VIEWER (From Map or List) */}
+      {/* 6. FULL PROFILE VIEWER */}
       {viewingProfile && (
         <div className="absolute inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in zoom-in-95">
            <div className="bg-white w-full max-w-md rounded-2xl relative overflow-hidden shadow-2xl border border-gray-200">
@@ -282,6 +283,23 @@ export default function DashboardPage() {
                     }}
                  />
               )}
+           </div>
+        </div>
+      )}
+
+      {/* 7. 👇 NEW: SCHEDULE MODAL (UPCOMING APPOINTMENTS) */}
+      {showSchedule && profile && (
+        <div className="absolute inset-0 z-[9000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+           <div className="bg-white text-black w-full max-w-md rounded-xl p-6 shadow-2xl relative animate-in zoom-in">
+              <button onClick={() => setShowSchedule(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black"><X size={18}/></button>
+              
+              <UpcomingAppointments 
+                userId={profile.id} 
+                onOpenChat={(partnerId) => {
+                   setActiveChatUser({ id: partnerId, name: "Partner" }); 
+                   setShowSchedule(false);
+                }}
+              />
            </div>
         </div>
       )}
@@ -325,6 +343,15 @@ export default function DashboardPage() {
                {profile?.varsity_verified ? 'VERIFIED' : 'VERIFY VARSITY'}
              </button>
           )}
+
+          {/* 👇 NEW: SCHEDULE BUTTON */}
+          <button 
+            onClick={() => setShowSchedule(!showSchedule)} 
+            className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold flex items-center gap-2 transition-all
+              ${showSchedule ? 'bg-white text-black border-white' : 'bg-zinc-800 text-zinc-300 border-zinc-700 hover:bg-zinc-700'}`}
+          >
+            <CalendarClock size={12} /> SCHEDULE
+          </button>
 
           {/* REQUESTS BUTTON */}
           <button 
@@ -376,7 +403,6 @@ export default function DashboardPage() {
             results={aiResults} 
             onClose={() => setAiResults(null)}
             onContact={(user) => setContactTarget(user)}
-            // 👇 VIEW PROFILE CONNECTION
             onViewProfile={(userId) => handleViewProfile(userId)}
           />
         )}
@@ -424,9 +450,6 @@ export default function DashboardPage() {
           />
         </div>
       </div>
-
-      {/* AI Float (Student Only) */}
-     
 
       <style jsx>{`
         @keyframes progress {
