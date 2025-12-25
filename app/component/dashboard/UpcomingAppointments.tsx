@@ -7,9 +7,10 @@ import { Calendar, Clock, MapPin, PlayCircle, User, Loader2 } from 'lucide-react
 
 interface UpcomingProps {
   userId: string;
+  onOpenChat: (partnerId: string) => void; // Added this line
 }
 
-export default function UpcomingAppointments({ userId }: UpcomingProps) {
+export default function UpcomingAppointments({ userId, onOpenChat }: UpcomingProps) {
   const supabase = createClient();
   const router = useRouter();
   const [appointments, setAppointments] = useState<any[]>([]);
