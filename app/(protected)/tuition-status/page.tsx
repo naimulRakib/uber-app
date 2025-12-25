@@ -194,37 +194,44 @@ export default function TuitionStatusPage() {
         <div>
           <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4 ml-1">Active Contracts</h3>
           <div className="space-y-3">
-            {contracts.filter(c => c.status === 'active').map(c => (
-              <div key={c.id} className="bg-zinc-900 border border-white/10 p-5 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 group hover:border-emerald-500/50 transition-all">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-900/30 flex items-center justify-center text-emerald-400">
-                    <Users size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-lg">
-                      {role === 'tutor' ? c.student?.username : c.tutor?.username}
-                    </h4>
-                    <p className="text-[10px] text-gray-400">
-                      Started: {new Date(c.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
+            {contracts.filter(c => c.status === 'active').map(c => {
+              // --- ROBUST NAME LOGIC ---
+              const amITutor = userId === c.tutor_id;
+              const partnerName = amITutor ? c.student?.username : c.tutor?.username;
+              // -------------------------
 
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  {role === 'tutor' && (
-                    <button onClick={() => markComplete(c.id)} className="flex-1 sm:flex-none bg-white text-black text-xs font-bold px-4 py-3 rounded-lg hover:bg-emerald-400 transition-colors">
-                      Mark Complete
+              return (
+                <div key={c.id} className="bg-zinc-900 border border-white/10 p-5 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 group hover:border-emerald-500/50 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-emerald-900/30 flex items-center justify-center text-emerald-400">
+                      <Users size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">
+                        {partnerName || "Unknown Partner"}
+                      </h4>
+                      <p className="text-[10px] text-gray-400">
+                        Started: {new Date(c.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    {amITutor && (
+                      <button onClick={() => markComplete(c.id)} className="flex-1 sm:flex-none bg-white text-black text-xs font-bold px-4 py-3 rounded-lg hover:bg-emerald-400 transition-colors">
+                        Mark Complete
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => setCancelTarget(c.id)} 
+                      className="flex-1 sm:flex-none border border-red-500/30 text-red-500 text-xs font-bold px-4 py-3 rounded-lg hover:bg-red-900/20"
+                    >
+                      Cancel
                     </button>
-                  )}
-                  <button 
-                    onClick={() => setCancelTarget(c.id)} 
-                    className="flex-1 sm:flex-none border border-red-500/30 text-red-500 text-xs font-bold px-4 py-3 rounded-lg hover:bg-red-900/20"
-                  >
-                    Cancel
-                  </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {activeCount === 0 && (
               <div className="text-center py-8 border-2 border-dashed border-white/5 rounded-xl">
                 <p className="text-gray-500 text-sm">No active tuitions running.</p>
@@ -238,23 +245,32 @@ export default function TuitionStatusPage() {
           <div className="opacity-70 hover:opacity-100 transition-opacity duration-500">
             <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4 ml-1">Past History</h3>
             <div className="space-y-3">
-              {contracts.filter(c => c.status !== 'active' && c.status !== 'pending').map(c => (
-                <div key={c.id} className="bg-black border border-white/5 p-4 rounded-xl flex items-start gap-4">
-                  {c.status === 'completed' ? <CheckCircle className="text-emerald-500 shrink-0" size={20} /> : <XCircle className="text-red-500 shrink-0" size={20} />}
-                  <div className="flex-1">
-                    <div className="flex justify-between">
-                      <h5 className="font-bold text-sm text-gray-300">{role === 'tutor' ? c.student?.username : c.tutor?.username}</h5>
-                      <span className={`text-[10px] uppercase font-bold ${c.status === 'completed' ? 'text-emerald-500' : 'text-red-500'}`}>{c.status}</span>
-                    </div>
-                    {c.status === 'cancelled' && (
-                      <div className="mt-2 bg-red-900/10 border border-red-900/30 p-2 rounded text-xs text-red-300">
-                        <span className="font-bold block mb-1">Reason by {c.cancelled_by === userId ? "You" : "Partner"}:</span>
-                        "{c.cancellation_reason}"
+              {contracts.filter(c => c.status !== 'active' && c.status !== 'pending').map(c => {
+                // --- ROBUST NAME LOGIC ---
+                const amITutor = userId === c.tutor_id;
+                const partnerName = amITutor ? c.student?.username : c.tutor?.username;
+                // -------------------------
+
+                return (
+                  <div key={c.id} className="bg-black border border-white/5 p-4 rounded-xl flex items-start gap-4">
+                    {c.status === 'completed' ? <CheckCircle className="text-emerald-500 shrink-0" size={20} /> : <XCircle className="text-red-500 shrink-0" size={20} />}
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <h5 className="font-bold text-sm text-gray-300">
+                          {partnerName || "Unknown Partner"}
+                        </h5>
+                        <span className={`text-[10px] uppercase font-bold ${c.status === 'completed' ? 'text-emerald-500' : 'text-red-500'}`}>{c.status}</span>
                       </div>
-                    )}
+                      {c.status === 'cancelled' && (
+                        <div className="mt-2 bg-red-900/10 border border-red-900/30 p-2 rounded text-xs text-red-300">
+                          <span className="font-bold block mb-1">Reason by {c.cancelled_by === userId ? "You" : "Partner"}:</span>
+                          "{c.cancellation_reason}"
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
