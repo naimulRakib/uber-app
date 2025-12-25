@@ -1,190 +1,117 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import { ArrowRight, BookOpen, Shield, Star, CheckCircle } from 'lucide-react';
 
-
-
-export default function HomeUI() {
+export default function Home() {
   return (
-    <div className="min-h-screen bg-[#030303] text-white font-sans selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
-
-      {/* --- CUSTOM CSS ANIMATIONS --- */}
-      <style jsx>{`
-        @keyframes float {
-          0% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(5deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
-        }
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-blob { animation: blob 10s infinite; }
-        .delay-1000 { animation-delay: 1s; }
-        .delay-2000 { animation-delay: 2s; }
-        .delay-3000 { animation-delay: 3s; }
-      `}</style>
-
-      {/* --- DYNAMIC BACKGROUND LAYERS --- */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[70vw] md:w-[40vw] h-[70vw] md:h-[40vw] bg-purple-900/30 rounded-full blur-[80px] md:blur-[100px] animate-blob" />
-        <div className="absolute top-[20%] right-[-10%] w-[60vw] md:w-[35vw] h-[60vw] md:h-[35vw] bg-pink-900/20 rounded-full blur-[80px] md:blur-[100px] animate-blob delay-2000" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[80vw] md:w-[50vw] h-[80vw] md:h-[50vw] bg-indigo-900/20 rounded-full blur-[80px] md:blur-[100px] animate-blob delay-1000" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-      </div>
-
-      {/* --- NAVBAR --- */}
-      <nav className="relative z-50 w-full max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-        {/* Logo */}
-        <div className="flex items-center gap-2 font-bold text-xl md:text-2xl tracking-tighter">
-          <div className="w-8 h-8 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/30">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 font-sans">
+      
+      {/* Navbar - Trustworthy and Professional */}
+      <nav className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-50">
+        <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-slate-800">
+          <div className="bg-blue-600 text-white p-1 rounded-lg">
+            <BookOpen className="w-5 h-5" />
           </div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-            Twisted<span className="text-purple-500">.ai</span>
-          </span>
+          SafeTutor
         </div>
-
-        {/* Login Button */}
-        <div className="flex items-center gap-4">
-          <span className="hidden md:block text-xs text-gray-400 font-medium">Already twisted?</span>
-          <Link href="/login">
-            <button className="px-5 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition text-sm font-semibold backdrop-blur-md">
-              Login
-            </button>
+        <div className="flex gap-4 text-sm font-medium">
+          <Link href="/login" className="hidden sm:block px-4 py-2 text-slate-600 hover:text-blue-600 transition">
+            Log In
+          </Link>
+          <Link href="/signup" className="px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition shadow-sm">
+            Get Started
           </Link>
         </div>
       </nav>
 
-      {/* --- HERO SECTION --- */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-8 pb-16 md:pt-20 md:pb-20 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 text-center mt-16 mb-20">
         
-        {/* LEFT: TEXT & CTA */}
-        <div className="flex-1 text-center md:text-left w-full">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-900/30 border border-purple-500/30 mb-6 backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-            </span>
-            <span className="text-[10px] font-bold tracking-widest uppercase text-purple-300">
-              AI Detective Active
-            </span>
-          </div>
+        {/* Trust Badge */}
+        <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold mb-8 border border-blue-100 uppercase tracking-wide">
+          <Shield className="w-3 h-3" />
+          Background Verified Tutors Only
+        </div>
+        
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 max-w-4xl mb-6">
+          Master any subject with <br />
+          <span className="text-blue-600">trusted academic experts.</span>
+        </h1>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
-            Get <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">Brutal</span> <br/>
-            Honesty.
-          </h1>
-          
-          <p className="text-gray-400 text-base md:text-xl mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed">
-            Let your friends send anonymous messages. Our AI decodes their vibe, roast their battery life, and exposes their location.
-          </p>
+        <p className="text-lg text-slate-600 max-w-2xl mb-10 leading-relaxed">
+          Connect with Ivy League students and certified teachers in a secure, monitored environment. 
+          We prioritize safety, quality, and results.
+        </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start w-full">
-            {/* Primary CTA: Sign Up */}
-            <Link href="/signup" className="w-full sm:w-auto">
-              <button className="w-full px-8 py-4 bg-white text-black text-lg font-bold rounded-xl hover:scale-105 transition-transform shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2">
-                Get My Link / Sign Up
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-              </button>
-            </Link>
-
-            {/* Secondary CTA: Instant Access */}
-            <div className="w-full sm:w-auto">
-           
-            </div>
-          </div>
-          
-          <p className="mt-4 text-xs text-gray-500">
-            *No sign-up required for Guest Mode.
-          </p>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+          <button className="flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
+            Find a Tutor <ArrowRight className="w-4 h-4" />
+          </button>
+          <button className="px-8 py-4 bg-white border border-slate-200 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition">
+            Become a Tutor
+          </button>
         </div>
 
-        {/* RIGHT: STICKER UI VISUALS */}
-        <div className="flex-1 w-full relative h-[450px] md:h-[500px] flex items-center justify-center transform scale-90 sm:scale-100 md:scale-100 origin-top">
-            
-            {/* Floating Emoji BG */}
-            <div className="absolute top-0 right-4 md:right-10 text-5xl md:text-6xl animate-float delay-1000 opacity-80">👀</div>
-            <div className="absolute bottom-10 left-4 md:left-10 text-5xl md:text-6xl animate-float delay-2000 opacity-60 blur-[2px]">💣</div>
-            <div className="absolute top-1/2 left-0 text-3xl md:text-4xl animate-float delay-3000 opacity-40">🕵️</div>
+        {/* Mock UI: Tutor Profile Card */}
+        <div className="mt-20 w-full max-w-3xl relative">
+            {/* Decorative background blobs */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-blue-200/50 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-200/50 rounded-full blur-3xl"></div>
 
-            {/* CARD 1: The Question (Back Layer) */}
-            <div className="absolute top-10 right-6 md:right-10 w-56 md:w-64 bg-gradient-to-br from-orange-400 to-pink-600 p-6 rounded-3xl shadow-2xl rotate-12 opacity-40 blur-[1px] animate-float delay-1000">
-               <div className="bg-white/20 h-4 w-1/2 rounded-full mb-4"></div>
-               <div className="bg-white/20 h-4 w-3/4 rounded-full"></div>
-            </div>
+            <div className="relative border border-slate-200 rounded-2xl shadow-xl bg-white p-6 text-left flex flex-col sm:flex-row gap-6">
+                {/* Avatar Placeholder */}
+                <div className="w-24 h-24 bg-slate-100 rounded-full flex-shrink-0 border-4 border-white shadow-sm flex items-center justify-center text-4xl">
+                    👩‍🏫
+                </div>
+                
+                {/* Tutor Info */}
+                <div className="flex-1 space-y-3">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="font-bold text-lg text-slate-900">Sarah Jenkins</h3>
+                            <p className="text-sm text-slate-500">PhD Candidate, Mathematics • Stanford University</p>
+                        </div>
+                        <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded text-yellow-700 text-xs font-bold border border-yellow-100">
+                            <Star className="w-3 h-3 fill-current" /> 5.0
+                        </div>
+                    </div>
 
-            {/* CARD 2: The Main Interface (Front Layer) */}
-            <div className="relative w-72 md:w-80 backdrop-blur-2xl bg-black/40 border border-white/10 rounded-[32px] p-6 shadow-2xl animate-float border-t-purple-500/50">
-               
-               {/* Header */}
-               <div className="flex items-center gap-3 mb-6">
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500"></div>
-                 <div>
-                   <div className="h-2 w-20 bg-gray-600 rounded-full mb-1"></div>
-                   <div className="h-2 w-12 bg-gray-700 rounded-full"></div>
-                 </div>
-               </div>
+                    <div className="flex flex-wrap gap-2">
+                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md">Calculus</span>
+                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md">Physics</span>
+                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md">SAT Prep</span>
+                    </div>
 
-               {/* Message Box */}
-               <div className="bg-white rounded-2xl p-6 text-center shadow-lg mb-6 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-purple-500"></div>
-                  <p className="text-gray-900 font-bold text-lg mb-2">Send me anonymous messages!</p>
-                  <p className="text-gray-500 text-sm">I won't know who sent it...</p>
-               </div>
+                    <div className="pt-2 flex items-center gap-4 text-xs text-slate-500 border-t border-slate-100 mt-2">
+                        <span className="flex items-center gap-1 text-green-600 font-medium">
+                            <CheckCircle className="w-3 h-3" /> ID Verified
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <Shield className="w-3 h-3" /> Background Check Clear
+                        </span>
+                    </div>
+                </div>
 
-               {/* Input Mockup */}
-               <div className="bg-white/5 rounded-xl h-12 w-full border border-white/10 flex items-center px-4 mb-4">
-                  <span className="text-gray-500 text-sm">Type a secret...</span>
-               </div>
-               
-               {/* Button Mockup */}
-               <div className="bg-white text-black font-bold text-center py-3 rounded-xl shadow-lg shadow-white/10">
-                  Send Secret
-               </div>
-
-               {/* The "Twisted" Badge */}
-               <div className="absolute -bottom-6 -right-6 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg border border-red-400 animate-pulse">
-                  📍 IP DETECTED
-               </div>
+                {/* "Book" Button Mock */}
+                <div className="flex items-center">
+                    <button className="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition">
+                        Book Session
+                    </button>
+                </div>
             </div>
         </div>
-      </div>
+      </main>
 
-      {/* --- FEATURE STRIP --- */}
-      <div className="w-full border-y border-white/5 bg-black/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-center md:justify-between gap-8 md:gap-0 text-center md:text-left">
-          <div className="flex flex-col md:flex-row items-center gap-3 justify-center md:justify-start">
-             <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 mb-2 md:mb-0">⚡</div>
-             <div>
-                <h3 className="font-bold text-sm">Instant Replies</h3>
-                <p className="text-xs text-gray-500">AI generates witty comebacks.</p>
-             </div>
-          </div>
-          <div className="flex flex-col md:flex-row items-center gap-3 justify-center md:justify-start">
-             <div className="p-2 bg-red-500/10 rounded-lg text-red-400 mb-2 md:mb-0">🔋</div>
-             <div>
-                <h3 className="font-bold text-sm">Device Detective</h3>
-                <p className="text-xs text-gray-500">We expose their battery %.</p>
-             </div>
-          </div>
-          <div className="flex flex-col md:flex-row items-center gap-3 justify-center md:justify-start">
-             <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400 mb-2 md:mb-0">🎨</div>
-             <div>
-                <h3 className="font-bold text-sm">Story Ready</h3>
-                <p className="text-xs text-gray-500">Beautiful cards for IG/FB.</p>
-             </div>
-          </div>
+      <footer className="py-8 text-center text-slate-400 text-sm border-t border-slate-200 bg-white">
+        <div className="flex justify-center gap-6 mb-4 font-medium">
+            <span className="cursor-pointer hover:text-slate-600">Safety Policy</span>
+            <span className="cursor-pointer hover:text-slate-600">For Parents</span>
+            <span className="cursor-pointer hover:text-slate-600">Contact</span>
         </div>
-      </div>
-
-   
-
+        <p>© 2024 SafeTutor Inc. Education for everyone.</p>
+      </footer>
     </div>
   );
 }
