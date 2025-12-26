@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link'; // Import Link
 import { 
   ShieldCheck, GraduationCap, MapPin, Banknote, 
   Ruler, Flame, Eye, Trash2, Clock, BookOpen, 
-  User as UserIcon, Heart, School, UserCheck, FileText 
+  User as UserIcon, Heart, School, UserCheck, FileText, Star // Import Star icon
 } from 'lucide-react';
 import { getDistanceKm } from './MapUtils';
 
@@ -286,7 +287,16 @@ export default function UserCard({
                </button>
             )}
 
-            {/* PROFILE BUTTON - ALWAYS VISIBLE */}
+            {/* REVIEW BUTTON */}
+            <Link 
+              href={`/profile/rating/${resolveId}`}
+              className="p-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors border border-transparent hover:border-yellow-200 flex items-center justify-center"
+              title="Reviews"
+            >
+              <Star size={14} />
+            </Link>
+
+            {/* PROFILE BUTTON */}
             {onViewProfile && (
                 <button 
                   onClick={() => onViewProfile(resolveId, user.match_score || 0)}

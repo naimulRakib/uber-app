@@ -7,7 +7,7 @@ import { createClient } from '@/app/utils/supabase/client';
 import { 
   Map, ShieldAlert, FileText, LayoutDashboard, 
   Siren, MonitorPlay, LogOut, User, 
-  Wallet, BookOpen, ChevronRight, Activity, Bell
+  Wallet, BookOpen, ChevronRight, Activity, Bell, GraduationCap // <--- Added Icon
 } from 'lucide-react';
 
 export default function DashboardHome() {
@@ -185,6 +185,16 @@ export default function DashboardHome() {
 
         {/* 4. UTILITIES ROW */}
         
+        {/* NEW: ClassRoom (QR Attendance) */}
+        <Link href="/tuition" className="md:col-span-1 bg-gradient-to-br from-zinc-900 to-zinc-950 border border-blue-500/30 rounded-3xl p-6 hover:border-blue-400 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all group">
+            <GraduationCap size={24} className="text-blue-400 mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="font-bold text-white">ClassRoom</h3>
+            <p className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider">QR Attendance & Logs</p>
+            <div className="flex items-center gap-2 text-xs text-blue-400 mt-4 group-hover:translate-x-1 transition-transform font-bold">
+               Enter Room <ChevronRight size={12}/>
+            </div>
+        </Link>
+
         {/* Tuition Manager / Status */}
         <Link href="/tuition-status" className="md:col-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition-all group">
             <BookOpen size={24} className="text-purple-400 mb-4" />
@@ -205,9 +215,9 @@ export default function DashboardHome() {
 
         {/* Tutor Specific Dashboard (Earnings, etc) */}
         {isTutor && (
-          <Link href="/tutor/dashboard" className="md:col-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 hover:border-cyan-500/50 transition-all group">
+          <Link href="/auth/dashboard" className="md:col-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 hover:border-cyan-500/50 transition-all group">
               <LayoutDashboard size={24} className="text-cyan-400 mb-4" />
-              <h3 className="font-bold">My Earnings</h3>
+              <h3 className="font-bold">My Tuition</h3>
               <div className="flex items-center gap-2 text-xs text-zinc-500 mt-2 group-hover:text-white transition-colors">
                  Manage Profile <ChevronRight size={12}/>
               </div>
